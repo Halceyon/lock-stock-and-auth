@@ -16,7 +16,7 @@
     <releaseNotes>
     </releaseNotes>
     <summary>
-      Nuget package for setting up authentication for a web application and a plaint client using .NET Identity
+      Nuget package for setting up authentication for a web application and a plain client using .NET Identity
     </summary>
     <language>en-US</language>
     <projectUrl>https://github.com/Halceyon/lock-stock-and-auth</projectUrl>

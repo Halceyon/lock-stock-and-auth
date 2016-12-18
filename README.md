@@ -12,8 +12,13 @@ This Nuget package is created to simplify the following authentication in Asp.Ne
 To get started you need to install the Nuget package:
 >Install-Package Lock-Stock-and-Auth
 
-This will create a folder in the root of your web application "Auth".
-Inside this folder is the data context, controllers, models and views for your web application authentication.
+This will create the following folders in the root of your web application:
+
+ - "Auth" - Contains the data context, managers, entities, controllers, models and views.
+ - "Providers" - OAuth and Bearer authentication providers
+ - "js/libs" - HTML client library
+
+
 
 To configure your oAuth and Auth option you need to edit the App_Start/AuthConfig.cs file. 
 

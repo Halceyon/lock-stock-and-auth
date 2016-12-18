@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Lock-Stock-and-Auth</id>
+    <version>0.1.0</version>
+    <title>Lock Stock and Auth</title>
+    <authors>Craig Pretorius</authors>
+    <owners></owners>
+    <description>
+      This Nuget package is created to simplify the following authentication in Asp.Net Identity:
+
+      - Cookie authentication for web sites
+      - Token based authentication for HTML applications to Web Api
+      - Token based authentication for HTML applications to OData
+    </description>
+    <releaseNotes>
+    </releaseNotes>
+    <summary>
+      Nuget package for setting up authentication for a web application and a plaint client using .NET Identity
+    </summary>
+    <language>en-US</language>
+    <projectUrl>https://github.com/Halceyon/lock-stock-and-auth</projectUrl>
+    <iconUrl>https://nuget.org/Content/Images/packageDefaultIcon-50x50.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <licenseUrl>https://github.com/Halceyon/lock-stock-and-auth/blob/master/LICENSE</licenseUrl>
+    <copyright>Code HQ (Pty) Ltd Copyright 2016</copyright>
+    <dependencies>
+        <group targetFramework="net40">
+          <dependency id="Microsoft.Owin.Cors" version="3.0.1" />
+          <dependency id="Microsoft.AspNet.WebApi" version="5.2.3" />
+          <dependency id="Microsoft.AspNet.WebApi.Cors" version="5.2.3" />
+          <dependency id="Microsoft.AspNet.WebApi.Owin" version="5.2.3" />
+        </group>
+    </dependencies>
+    <references></references>
+    <tags></tags>
+  </metadata>
+  <files>
+    <file src="lib\" target="lib" />
+    <file src="tools\" target="tools" />
+    <file src="content\" target="content" />
+  </files>
+</package>

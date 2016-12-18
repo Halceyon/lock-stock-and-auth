@@ -195,7 +195,7 @@ orleans.codegen.cs
 
 # Since there are multiple workflows, uncomment next line to ignore bower_components
 # (https://github.com/github/gitignore/pull/1529#issuecomment-104372622)
-#bower_components/
+bower_components/
 
 # RIA/Silverlight projects
 Generated_Code/
@@ -250,3 +250,11 @@ paket-files/
 # JetBrains Rider
 .idea/
 *.sln.iml
+
+# Ignore content files from Nuget package
+/src/Lock Stock and Auth/content/Providers
+/src/Lock Stock and Auth/content/js/libs
+/src/Lock Stock and Auth/content/Auth
+/src/Lock Stock and Auth/content/App_Start
+**/*.nupkg.bak
+/src/Lock Stock and Auth/Lock-Stock-and-Auth.0.1.0.nupkg.bak

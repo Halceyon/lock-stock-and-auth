@@ -1,0 +1,152 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Client App</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="bower_components/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <link href="css/custom.css" rel="stylesheet" />
+
+</head>
+<body id="page-top" data-spy="scroll" data-target=".navbar-fixed-top">
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+        <div class="container">
+            <div class="navbar-header page-scroll">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand page-scroll" href="#page-top">Sample HTML Client</a>
+            </div>
+        </div>
+        <!-- /.container -->
+    </nav>
+
+    <!-- Intro Section -->
+    <section id="intro">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1>Register</h1>
+                    <form id="formRegister">
+                        <div class="form-group">
+                            <input type="text" name="username" class="form-control" placeholder="Username" />
+                        </div>
+                        <div class="form-group">
+                            <input type="password" name="password" class="form-control" placeholder="Password" />
+                        </div>
+                        <div class="form-group">
+                            <input type="submit" class="btn btn-lg btn-success" />
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1>Login</h1>
+                    <form id="formLogin">
+                        <div class="form-group">
+                            <input type="text" name="username" class="form-control" placeholder="Username"/>
+                        </div>
+                        <div class="form-group">
+                            <input type="password" name="password" class="form-control" placeholder="Password"/>
+                        </div>
+                        <div class="form-group">
+                            <input type="submit" class="btn btn-lg btn-success"/>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <button id="btnLogOut" class="btn btn-danger">Log out</button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1>Token details</h1>
+                    <button id="btnRefreshToken" class="btn btn-default">Refresh Token</button>
+                </div>
+                <div class="col-lg-12">
+                    Token: <span id="spanToken"></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1>Books</h1>
+                    <button id="btnGetData" class="btn btn-danger">Get Secure Data</button>
+                </div>
+            </div>
+            <div class="row">
+
+                <ul id="ulData">
+
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <script src="bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="bower_components/jquery-tmpl/jquery.tmpl.js"></script>
+    <script src="js/libs/aspnetAuth.js"></script>
+    <script>
+        // set the url of your hosted web application
+        aspnetAuth.url = "http://localhost:45083";
+
+        if (aspnetAuth.authentication) {
+            $('#spanToken').html(aspnetAuth.authentication.refresh_token);
+        }
+
+        $('#formRegister').on('submit', function (e) {
+            e.preventDefault();
+            var username = $("#formRegister input[name=username]").val();
+            var password = $("#formRegister input[name=password]").val();
+            aspnetAuth.register(username, password, function (result) {
+                alert(result.message);
+            });
+        });
+        $('#formLogin').on('submit', function (e) {
+            e.preventDefault();
+            var username = $("#formLogin input[name=username]").val();
+            var password = $("#formLogin input[name=password]").val();
+            aspnetAuth.login(username, password, function (result) {
+                alert(result.message);
+                $("#spanToken").html(aspnetAuth.authentication.refresh_token);
+            });
+        });
+        $("#btnLogOut").click(function() {
+            aspnetAuth.logout(function(result) {
+                alert(result.message);
+            });
+        });
+        $('#btnRefreshToken').click(function () {
+            aspnetAuth.refreshToken(function (result) {
+                $("#spanToken").html(aspnetAuth.authentication.refresh_token);
+            });
+        });
+        $('#btnGetData').click(function () {
+            aspnetAuth.web.get("/api/books", function(books) {
+                var markup = "<li><b>${name}</b> ${author}</li>";
+                $.template("booksTemplate", markup);
+                $.tmpl("booksTemplate", books)
+                    .appendTo("#ulData");
+            });
+        });
+    </script>
+</body>
+</html>

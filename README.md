@@ -18,7 +18,16 @@ This will create the following folders in the root of your web application:
  - "Providers" - OAuth and Bearer authentication providers
  - "js/libs" - HTML client library
 
+Remember to delete your old authentication configuration files, controllers and views.  Common files that need to be deleted are:
 
+- App_Start/IdentityConfig.cs
+- App_Start/Startup.Auth.cs
+- Controllers/AccountController.cs
+- Models/AccountBindingModels.cs
+- Models/AccountViewModels.cs
+- Models/IdentityModels.cs
+- Providers/ApplicationOAuthProvider.cs
+- Views/Account (Note you can migrate these views if you've already customized them)
 
 To configure your oAuth and Auth option you need to edit the App_Start/AuthConfig.cs file. 
 

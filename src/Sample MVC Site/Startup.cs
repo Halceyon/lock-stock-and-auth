@@ -16,7 +16,9 @@ namespace Sample_MVC_Site
             AuthConfig.ConfigureOAuth(app);
             AuthConfig.ConfigureAuth(app);
 
+            ODataConfig.Register(config);
             WebApiConfig.Register(config);
+
             app.UseCors(Microsoft.Owin.Cors.CorsOptions.AllowAll);
             app.UseWebApi(config);
 

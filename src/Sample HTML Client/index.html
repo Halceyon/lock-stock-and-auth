@@ -88,14 +88,24 @@
             <div class="row">
                 <div class="col-lg-12">
                     <h1>Books</h1>
-                    <button id="btnGetData" class="btn btn-danger">Get Secure Data</button>
+                    <button id="btnGetWebApiData" class="btn btn-danger">Get Secure Web Api Data</button>
                 </div>
             </div>
             <div class="row">
 
-                <ul id="ulData">
+                <ul id="ulWebApiData">
 
                 </ul>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1>Books</h1>
+                    <button id="btnGetOData" class="btn btn-danger">Get Secure Web Api Data</button>
+                </div>
+            </div>
+            <div class="row">
+
+                <ul id="ulOData"></ul>
             </div>
         </div>
     </section>
@@ -139,12 +149,19 @@
                 $("#spanToken").html(aspnetAuth.authentication.refresh_token);
             });
         });
-        $('#btnGetData').click(function () {
+        var templMarkup = "<li><b>${name}</b> ${author}</li>";
+        $.template("booksTemplate", templMarkup);
+
+        $('#btnGetWebApiData').click(function () {
             aspnetAuth.web.get("/api/books", function(books) {
-                var markup = "<li><b>${name}</b> ${author}</li>";
-                $.template("booksTemplate", markup);
                 $.tmpl("booksTemplate", books)
-                    .appendTo("#ulData");
+                    .appendTo("#ulWebApiData");
+            });
+        });
+        $('#btnGetOData').click(function () {
+            aspnetAuth.web.get("/odata/books", function (books) {
+                $.tmpl("booksTemplate", books)
+                    .appendTo("#ulOData");
             });
         });
     </script>

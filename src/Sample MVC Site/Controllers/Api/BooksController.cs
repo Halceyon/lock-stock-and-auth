@@ -1,9 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using System.Web.Http.Description;
+using Sample_MVC_Site.Data;
+using Sample_MVC_Site.Data.Entities;
 
 namespace Sample_MVC_Site.Controllers.Api
 {
@@ -11,57 +17,105 @@ namespace Sample_MVC_Site.Controllers.Api
     [RoutePrefix("api/books")]
     public class BooksController : ApiController
     {
+        private SampleDataContext db = new SampleDataContext();
+
         // GET: api/Books
-        public IEnumerable<Book> Get()
+        public IQueryable<Book> GetBooks()
         {
-            return new List<Book>()
-            {
-                new Book()
-                {
-                    Id = 1,
-                    Name = "Moby Dick",
-                    Author = "Herman Melville"
-                },
-                new Book()
-                {
-                    Id = 2,
-                    Name = "Hamlet",
-                    Author = "William Shakespeare"
-                }
-            };
+            return db.Books;
         }
 
         // GET: api/Books/5
-        public Book Get(int id)
+        [ResponseType(typeof(Book))]
+        public IHttpActionResult GetBook(int id)
         {
-            return new Book()
+            Book book = db.Books.Find(id);
+            if (book == null)
             {
-                Id = 1,
-                Name = "Moby Dick",
-                Author = "Herman Melville"
-            };
-        }
+                return NotFound();
+            }
 
-        // POST: api/Books
-        public void Post([FromBody]string value)
-        {
+            return Ok(book);
         }
 
         // PUT: api/Books/5
-        public void Put(int id, [FromBody]string value)
+        [ResponseType(typeof(void))]
+        public IHttpActionResult PutBook(int id, Book book)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (id != book.Id)
+            {
+                return BadRequest();
+            }
+
+            db.Entry(book).State = EntityState.Modified;
+
+            try
+            {
+                db.SaveChanges();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!BookExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return StatusCode(HttpStatusCode.NoContent);
+        }
+
+        // POST: api/Books
+        [ResponseType(typeof(Book))]
+        public IHttpActionResult PostBook(Book book)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            db.Books.Add(book);
+            db.SaveChanges();
+
+            return CreatedAtRoute("DefaultApi", new { id = book.Id }, book);
         }
 
         // DELETE: api/Books/5
-        public void Delete(int id)
+        [ResponseType(typeof(Book))]
+        public IHttpActionResult DeleteBook(int id)
         {
+            Book book = db.Books.Find(id);
+            if (book == null)
+            {
+                return NotFound();
+            }
+
+            db.Books.Remove(book);
+            db.SaveChanges();
+
+            return Ok(book);
         }
 
-        public class Book
+        protected override void Dispose(bool disposing)
         {
-            public int Id { get; set; }
-            public string Name { get; set; }
-            public string Author { get; set; }
+            if (disposing)
+            {
+                db.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        private bool BookExists(int id)
+        {
+            return db.Books.Count(e => e.Id == id) > 0;
         }
     }
 }

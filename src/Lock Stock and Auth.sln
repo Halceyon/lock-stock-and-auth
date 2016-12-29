@@ -9,6 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample MVC Site", "Sample M
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2E877DCD-DECC-4EDE-887F-6E6C3DDF886A}"
 	ProjectSection(SolutionItems) = preProject
+		..\bower.json = ..\bower.json
 		gruntfile.js = gruntfile.js
 		..\README.md = ..\README.md
 	EndProjectSection

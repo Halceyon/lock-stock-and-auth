@@ -53,6 +53,17 @@ module.exports = function (grunt) {
                         dest: "Lock Stock and Auth/content/js/libs/"
                     }
                 ]
+            },
+            bower: {
+                files: [
+                    {// js bower files
+                        cwd: "Lock Stock and Auth/content/js/libs/",
+                        expand: true,
+                        src: ["**/*.js", "!obj/**", "!Properties/**"],
+                        filter: "isFile",
+                        dest: "../dist"
+                    }
+                ]
             }
         },
         replace: {

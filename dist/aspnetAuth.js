@@ -1,4 +1,11 @@
-﻿; (function (root, factory) {
+﻿/*!
+ * Lock stock and auth
+ * http://www.codehq.co.za
+ * Copyright 2017 Lock Stock and Auth Authors
+ * Copyright 2017 Code HQ (Pty) (Ltd)
+ * Licensed under MIT (https://github.com/Halceyon/lock-stock-and-auth/blob/master/LICENSE)
+ */
+; (function (root, factory) {
 
     if (typeof define === "function" && define.amd) {
         define(["jquery"], factory);
@@ -143,9 +150,10 @@
             fillAuth();
         },
         web: {
-            get: function(url, cb) {
+            get: function(url, data, cb) {
                 $.ajax({
                     url: aspnetAuth.url + url,
+                    data: data,
                     headers: {
                         'Authorization': 'Bearer ' + readCookie("aspnetAuthToken")
                     },
@@ -162,7 +170,14 @@
     };
 
     function fillAuth() {
-        aspnetAuth.authentication = JSON.parse(readCookie("apnetAuth"));
+        var expires = Date.parse(aspnetAuth.authentication[".expires"]);
+        var now = Date.parse(new Date());
+        if (expires < now) {
+            eraseCookie("apnetAuth");
+        } else {
+            aspnetAuth.authentication = JSON.parse(readCookie("apnetAuth"));
+        }
+
     }
 
     fillAuth();

@@ -2,6 +2,7 @@
 module.exports = function (grunt) {
     // 1. All configuration goes here 
     grunt.initConfig({
+        pkg: grunt.file.readJSON("package.json"),
         copy: {
             pkg: {
                 files: [
@@ -94,7 +95,15 @@ module.exports = function (grunt) {
             options: {
                 compress: {
                     drop_console: true
-                }
+                },
+                banner: "/*! Lock stock and auth - v<%= pkg.version %> - " +
+                '<%= grunt.template.today("yyyy-mm-dd") %> */ \n' +
+                "/*! \n" +
+                " * http://www.codehq.co.za \n" +
+                " * Copyright 2017 Lock Stock and Auth Authors \n" +
+                " * Copyright 2017 Code HQ (Pty) (Ltd) \n" +
+                " Licensed under MIT (https://github.com/Halceyon/lock-stock-and-auth/blob/master/LICENSE) \n" +
+                " */"
             },
             aspnetAuth: {// minify aspnetAuth.js
                 files: {
@@ -103,8 +112,10 @@ module.exports = function (grunt) {
             }
         }
     });
+
     grunt.loadNpmTasks("grunt-contrib-copy");
     grunt.loadNpmTasks("grunt-text-replace");
     grunt.loadNpmTasks("grunt-contrib-uglify");
-    grunt.registerTask("default", ["copy:pkg", "replace:pkg", "uglify"]);
+
+    grunt.registerTask("default", ["copy:pkg", "replace:pkg", "uglify", "copy:bower"]);
 };

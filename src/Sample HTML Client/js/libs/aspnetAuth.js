@@ -143,9 +143,10 @@
             fillAuth();
         },
         web: {
-            get: function(url, cb) {
+            get: function(url, data, cb) {
                 $.ajax({
                     url: aspnetAuth.url + url,
+                    data: data,
                     headers: {
                         'Authorization': 'Bearer ' + readCookie("aspnetAuthToken")
                     },
@@ -162,7 +163,14 @@
     };
 
     function fillAuth() {
-        aspnetAuth.authentication = JSON.parse(readCookie("apnetAuth"));
+        var expires = Date.parse(aspnetAuth.authentication[".expires"]);
+        var now = Date.parse(new Date());
+        if (expires < now) {
+            eraseCookie("apnetAuth");
+        } else {
+            aspnetAuth.authentication = JSON.parse(readCookie("apnetAuth"));
+        }
+
     }
 
     fillAuth();

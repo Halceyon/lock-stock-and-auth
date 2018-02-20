@@ -26,6 +26,9 @@
     <copyright>Code HQ (Pty) Ltd Copyright 2017</copyright>
     <dependencies>
         <group targetFramework="net40">
+          <dependency id="Autofac" version="4.0.0" />
+          <dependency id="Autofac.Mvc5" version="4.0.0" />
+          <dependency id="Autofac.WebApi2" version="4.0.1" />
           <dependency id="Microsoft.Owin.Cors" version="3.0.1" />
           <dependency id="Microsoft.AspNet.WebApi" version="5.2.3" />
           <dependency id="Microsoft.AspNet.WebApi.Cors" version="5.2.3" />

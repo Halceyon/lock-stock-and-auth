@@ -10,7 +10,7 @@ namespace Sample_MVC_Site
     {
         public static void Register(HttpConfiguration config)
         {
-            // Web API configuration and services
+            config.MapHttpAttributeRoutes();
             var cors = new EnableCorsAttribute("*", "*", "*");
             config.EnableCors(cors);
 

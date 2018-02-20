@@ -2,24 +2,16 @@
 
 This Nuget package is created to simplify the following authentication in Asp.Net Identity:
 
- - Cookie authentication for web sites
- - Token based authentication for html applications to Web Api
- - Token based authentication for html applications to OData
-
+ - Token based authentication for  html5 web apps to Web Api
+ - Token based authentication for html5 web apps to OData
+ - Cookie authentication for web sites (still to be completed, help would be appreciated)
 ---
 
 ## installation
 To get started you need to install the Nuget package:
 >Install-Package Lock-Stock-and-Auth
 
-This will create the following folders in the root of your web application:
-
- - "Auth" - Contains the data context, managers, entities, controllers, models and views.
- - "Providers" - OAuth and Bearer authentication providers
- - "js/libs" - HTML client library
-
 Remember to delete your old authentication configuration files, controllers and views.  Common files that need to be deleted are:
-
 - App_Start/IdentityConfig.cs
 - App_Start/Startup.Auth.cs
 - Controllers/AccountController.cs
@@ -29,51 +21,76 @@ Remember to delete your old authentication configuration files, controllers and 
 - Providers/ApplicationOAuthProvider.cs
 - Views/Account (Note you can migrate these views if you've already customized them)
 
-To configure your oAuth and Auth option you need to edit the App_Start/AuthConfig.cs file. 
-
-Next you need to edit your Startup.cs file in the root of your web application to include the following:
+Next you need to edit your OWIN Startup.cs file in the root of your web application to include the following:
 ```javascript
-    var config = new HttpConfiguration();
+    public void Configuration(IAppBuilder app)
+    {
+        var config = new HttpConfiguration();
+        app.UseCors(Microsoft.Owin.Cors.CorsOptions.AllowAll);
+        app.UseWebApi(config);
 
-    AuthConfig.ConfigureOAuth(app);
-    AuthConfig.ConfigureAuth(app);
-
-    WebApiConfig.Register(config);
-    app.UseCors(Microsoft.Owin.Cors.CorsOptions.AllowAll);
-    app.UseWebApi(config);
-
-    Database.SetInitializer(new MigrateDatabaseToLatestVersion<AuthContext, AuthContextConfiguration>());
+        var lockStockOwinStartup = new LockStockAuth.OwinStartup();
+        lockStockOwinStartup.Configuration(app);
+    }
 ```
-This tells your web application to use the authentication options defined in App_Start\AuthConfig.cs and it also enables [CORS](https://en.wikipedia.org/wiki/Cross-origin_resource_sharing).
+This initializes the OWIN authentication and it also enables [CORS](https://en.wikipedia.org/wiki/Cross-origin_resource_sharing).
 
-If you want to enable [CORS](https://en.wikipedia.org/wiki/Cross-origin_resource_sharing) for your web api, you need to edit your App_Start\WebApiConfig.cs file to look like this:
-
+Next you need to setup the IOC Configuration for the controllers from the Global.asax Application_Start event.  I'd recommend creating a IocConfig.cs file in your App_Startup folder like this:
 ```javascript
-public static void Register(HttpConfiguration config)
+public class IocConfig
 {
-    var cors = new EnableCorsAttribute("*", "*", "*");
-    config.EnableCors(cors);
-    
-    // Web API routes
-    config.MapHttpAttributeRoutes();
-    
-    config.Routes.MapHttpRoute(
-        name: "DefaultApi",
-        routeTemplate: "api/{controller}/{id}",
-        defaults: new { id = RouteParameter.Optional }
-    );
-    
-    var jsonFormatter = config.Formatters.OfType<JsonMediaTypeFormatter>().First();
-    jsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-    
+    /// <summary>
+    /// Autofac IOC for LockStockAuth Controllers
+    /// </summary>
+    /// <param name="config"></param>
+    public static void Register(HttpConfiguration config)
+    {
+        var builder = new ContainerBuilder();
+
+        // Register your Web API controllers.
+        builder.RegisterApiControllers(Assembly.GetExecutingAssembly());
+        builder.RegisterApiControllers(typeof(LockStockAuth.OwinStartup).Assembly);
+        
+        // Register your Web controllers.
+        builder.RegisterControllers(Assembly.GetExecutingAssembly());
+        builder.RegisterControllers(typeof(LockStockAuth.OwinStartup).Assembly);
+        
+        var container = builder.Build();
+        
+        DependencyResolver.SetResolver(new AutofacDependencyResolver(container)); // Set the MVC DependencyResolver
+        GlobalConfiguration.Configuration.DependencyResolver = new AutofacWebApiDependencyResolver(container); //Set the WebApi DependencyResolver
+    }
 }
 ```
-I use the jsonFormatter as I like all my web api replies to use [camelCase](https://en.wikipedia.org/wiki/Camel_case).
+And then calling the IocConfig from global.asax
+```javascript
+protected void Application_Start()
+{
+    AreaRegistration.RegisterAllAreas();
+    FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
+    
+    // Setup OData
+    ODataConfig.Register(GlobalConfiguration.Configuration);
+    RouteConfig.RegisterRoutes(RouteTable.Routes);
 
-## HTML client library
-When you install the Nuget package, it installs a client library for HTML applications to use in the root of your web application in js/libs/aspnetAuth.js
+    JsonConvert.DefaultSettings = () => new JsonSerializerSettings
+    {
+        Formatting = Formatting.Indented,
+        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+    };
+    // Setup Autofac IOC
+    IocConfig.Register(GlobalConfiguration.Configuration);
 
-There is a sample HTML application called "Sample HTML Client" as part of the source code that demonstrates how to use authentication in a plain HTML application.  This is handy for HTML5 hybrid mobile applications.
+    GlobalConfiguration.Configuration.EnsureInitialized();
+}
+```
+## Javascript client library
+The javascript library is kept in a [separate repository](https://github.com/Halceyon/aspnet-auth).
+To install the javascript client using:
+ #### npm
+```
+npm install aspnet-auth --save
+```
 
 ## Compiling the Nuget package from source
 The Nuget package content is built using grunt and running src\gruntfile.js

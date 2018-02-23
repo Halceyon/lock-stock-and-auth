@@ -7,6 +7,7 @@ using System.Web.Routing;
 using System.Web.Security;
 using System.Web.SessionState;
 using System.Web.Http;
+using Newtonsoft.Json;
 
 namespace Example.Mvc
 {
@@ -16,8 +17,18 @@ namespace Example.Mvc
         {
             // Code that runs on application startup
             AreaRegistration.RegisterAllAreas();
-            GlobalConfiguration.Configure(WebApiConfig.Register);
-            RouteConfig.RegisterRoutes(RouteTable.Routes);            
+
+            ODataConfig.Register(GlobalConfiguration.Configuration);
+            WebApiConfig.Register(GlobalConfiguration.Configuration);
+            RouteConfig.RegisterRoutes(RouteTable.Routes);
+
+            JsonConvert.DefaultSettings = () => new JsonSerializerSettings
+            {
+                Formatting = Formatting.Indented,
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            };
+            IocConfig.Register(GlobalConfiguration.Configuration);
+            GlobalConfiguration.Configuration.EnsureInitialized();
         }
     }
 }

@@ -4,7 +4,7 @@
   "description": "",
   "dependencies": {
     "aspnet-auth": "^1.0.1",
-    "bootstrap": "^4.0.0",
+    "bootstrap": "^4.3.1",
     "jqtpl": "^2.0.16-rc1",
     "jquery": "^3.3.1",
     "json-stable-stringify": "^1.0.1",
